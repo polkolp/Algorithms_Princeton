@@ -4,7 +4,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class PercolationStats {
     private Percolation pc;
-    private double[] fracopen; //fraction of open sites
+    private double[] fracopen; // fraction of open sites
 
     public PercolationStats(int n, int trials)    // perform trials independent experiments on an n-by-n grid
     {

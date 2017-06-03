@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdIn;
 
 public class Percolation {
     private int[] grid;
@@ -8,6 +9,9 @@ public class Percolation {
     
     public Percolation(int n)                // create n-by-n grid, with all sites blocked
     {
+        if (n <= 0) {
+            throw new IllegalArgumentException();
+        }
         arraysize = n;
         grid = new int[n*n+2];
         for (int i = 0; i < n*n+2; i++) {
@@ -25,67 +29,85 @@ public class Percolation {
     public    void open(int row, int col)    // open site (row, col) if it is not open already
     {
         int eleindex = (row-1)*arraysize+col;
-        grid[eleindex] = 1;
-       
-        int leftindex = eleindex-1;
- 
-        if (!quickunion.connected(eleindex, leftindex) && grid[leftindex] == 1 && eleindex % arraysize != 1) {
-            quickunion.union(eleindex, leftindex); 
-        }
-
-        int rightindex = eleindex+1; 
-
-        if (!quickunion.connected(eleindex, rightindex) && grid[rightindex] == 1 && eleindex % arraysize != 0) {
-            quickunion.union(eleindex, rightindex); 
-        }
-
-       
-        int upindex = eleindex-arraysize;
-
-        if (upindex > 0 && !quickunion.connected(eleindex, upindex) && grid[upindex] == 1) {
-            quickunion.union(eleindex, upindex);
-        }
-        
-        int downindex = eleindex+arraysize; 
-
-        if (downindex < arraysize*arraysize+1 && !quickunion.connected(eleindex, downindex) && grid[downindex] == 1) {
-            quickunion.union(eleindex, downindex);
+        if (grid[eleindex] != 1) {
+            grid[eleindex] = 1;
+            
+            int leftindex = eleindex-1;
+            
+            if (!quickunion.connected(eleindex, leftindex) && grid[leftindex] == 1 && eleindex % arraysize != 1) {
+                quickunion.union(eleindex, leftindex); 
+            }
+            
+            int rightindex = eleindex+1; 
+            
+            if (!quickunion.connected(eleindex, rightindex) && grid[rightindex] == 1 && eleindex % arraysize != 0) {
+                quickunion.union(eleindex, rightindex); 
+            }
+            
+            
+            int upindex = eleindex-arraysize;
+            
+            if (upindex > 0 && !quickunion.connected(eleindex, upindex) && grid[upindex] == 1) {
+                quickunion.union(eleindex, upindex);
+            }
+            
+            int downindex = eleindex+arraysize; 
+            
+            if (downindex < arraysize*arraysize+1 && !quickunion.connected(eleindex, downindex) && grid[downindex] == 1) {
+                quickunion.union(eleindex, downindex);
+            }
+            else if (row > arraysize || col > arraysize) throw new IndexOutOfBoundsException();
         }
     }
     public boolean isOpen(int row, int col)  // is site (row, col) open? 
-    { return grid[(row-1)*arraysize+col] == 1; }
+    { 
+        if (row > arraysize || col > arraysize) throw new IndexOutOfBoundsException();
+        return grid[(row-1)*arraysize+col] == 1; 
+    }
     
     public boolean isFull(int row, int col)  // is site (row, col) full?
-    { return quickunion.connected(0, (row-1)*arraysize+col+1); }
+    { 
+        if (row > arraysize || col > arraysize) throw new IndexOutOfBoundsException();
+        return quickunion.connected(0, (row-1)*arraysize+col) && grid[(row-1)*arraysize+col] == 1;
+    }
     
     public     int numberOfOpenSites()       // number of open sites
     {
         int count = 0;
-        for (int i = 0; i < arraysize*arraysize+2; i++) {
+        for (int i = 1; i < arraysize*arraysize+1; i++) {
             if (grid[i] == 1) count++;
         }
-        return count-2; //compensate for the two virtual sites
+        return count; // compensate for the two virtual sites
     }
     
     public boolean percolates()              // does the system percolate?
-    { return quickunion.connected(0, arraysize*arraysize+1); }
-
+    { 
+        if (arraysize == 1) return grid[1] == 1;
+        
+        
+        else if (arraysize == 2) {
+            int col1sum = grid[1] + grid[3]; // column 1 sum
+            int col2sum = grid[2] + grid[4]; // column 2 sum
+            return (col1sum == 2 || col2sum == 2);
+            
+        }
+        
+        else {
+            return quickunion.connected(0, arraysize*arraysize+1); 
+        }
+    }
     public static void main(String[] args)   // test client (optional)
     {
-        Percolation pc = new Percolation(3);
-        pc.open(2, 1);
-        pc.open(1, 2);
-        pc.open(1, 3);
-        pc.open(2, 3);
-        pc.open(3, 3);
-        StdOut.print(pc.isFull(2, 1));       
-        StdOut.print('\n');
-        StdOut.print(pc.isOpen(2, 2));
-        StdOut.print('\n');
-        StdOut.print(pc.isOpen(2, 3));
-        StdOut.print('\n');
-        StdOut.print(pc.numberOfOpenSites());
-        StdOut.print('\n');
-        StdOut.print(pc.percolates());
+        int n = StdIn.readInt(); 
+        Percolation pc = new Percolation(n);
+    
+        while (!StdIn.isEmpty()) {
+            int row = StdIn.readInt();
+            int col = StdIn.readInt();
+            pc.open(row, col);
+        }
+        StdOut.println(pc.numberOfOpenSites());
+        StdOut.println(pc.percolates()); 
+        
     }
 }

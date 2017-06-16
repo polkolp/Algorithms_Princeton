@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdIn;
 
+
 public class Percolation {
     private int[] grid;
     private int arraysize; 

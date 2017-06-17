@@ -65,7 +65,7 @@ public class Point implements Comparable<Point> {
             if (this.y == that.y) return Double.NEGATIVE_INFINITY;
             else return Double.POSITIVE_INFINITY;
         }
-        else return (that.y - this.y) / (that.x - this.x);
+        else return ((double) that.y - this.y) / (that.x - this.x);
     }
     
     /**
@@ -97,15 +97,15 @@ public class Point implements Comparable<Point> {
      *
      * @return the Comparator that defines this ordering on points
      */
-    public static Comparator<Point> slopeOrder() {
+    public Comparator<Point> slopeOrder() {
         /* YOUR CODE HERE */
         return new SlopeComparator();
     }
     
-    private static class SlopeComparator implements Comparator<Point> {
+    private class SlopeComparator implements Comparator<Point> {
         public int compare(Point a, Point b) {
-            if (this.slopeTo(a) > this.slopeTo(b)) return 1;
-            else if (this.slopeTo(a) == this.slopeTo(b)) return 0;
+            if (slopeTo(a) > slopeTo(b)) return 1;
+            else if (slopeTo(a) == slopeTo(b)) return 0;
             else return -1;
         }
     }
@@ -130,11 +130,12 @@ public class Point implements Comparable<Point> {
     public static void main(String[] args) {
         /* YOUR CODE HERE */
         Point[] pl = new Point[4];
+        Point origin = new Point(0, 0);
         pl[0] = new Point(0, 0);
         pl[1] = new Point(1, 1);
         pl[2] = new Point(3, 1);
         pl[3] = new Point(2, 2);
-        Arrays.sort(pl, slopeOrder());
+        Arrays.sort(pl, origin.slopeOrder());
         
         for (int i = 0; i < 4; i++){
             StdOut.println(pl[i]);

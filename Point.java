@@ -65,6 +65,7 @@ public class Point implements Comparable<Point> {
             if (this.y == that.y) return Double.NEGATIVE_INFINITY;
             else return Double.POSITIVE_INFINITY;
         }
+        else if (this.y == that.y) return 0.0;
         else return ((double) that.y - this.y) / (that.x - this.x);
     }
     
@@ -137,7 +138,7 @@ public class Point implements Comparable<Point> {
         pl[3] = new Point(2, 2);
         Arrays.sort(pl, origin.slopeOrder());
         
-        for (int i = 0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             StdOut.println(pl[i]);
         }
 //        StdOut.println(a.slopeTo(b));

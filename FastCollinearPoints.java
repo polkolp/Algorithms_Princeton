@@ -7,13 +7,7 @@ import java.util.Stack;
 public class FastCollinearPoints {
     private Stack<LineSegment> ls;
     private int count; // count line segments
-    public FastCollinearPoints(Point[] points) {    // finds all line segments containing 4 or more points
-        Stack<Point> collinearStart = new Stack<Point>();
-        Stack<Point> collinearEnd = new Stack<Point>();
-        Stack<Point> collinearStartCp = new Stack<Point>();
-        Stack<Point> collinearEndCp = new Stack<Point>();
-        int label = 0;
-        
+    public FastCollinearPoints(Point[] points) {    // finds all line segments containing 4 or more points        
         
         
         // exceptions
@@ -32,14 +26,15 @@ public class FastCollinearPoints {
         for (int i = 0; i < points.length; i++) pointsCopy[i] = points[i];
         
         for (int i = 0; i < pointsCopy.length; i++) {
-            
+            Point oldfinal = new Point(0,0);
             Arrays.sort(points, pointsCopy[i].slopeOrder()); // sort by slope. Same slope means collinear
             for (int k = 0; k < points.length-2; k++) {
+                
                 if (pointsCopy[i].slopeTo(points[k+2]) == pointsCopy[i].slopeTo(points[k])) { // is it possible to have a line segment?
                     int j = 2; 
                     if (k == points.length-3) j = 3; // corner case
                     else {
-                        while (pointsCopy[i].slopeTo(points[k+j]) == pointsCopy[i].slopeTo(points[k])) 
+                        while (k+j < pointsCopy.length && pointsCopy[i].slopeTo(points[k+j]) == pointsCopy[i].slopeTo(points[k])) // prevent overflow
                             j++; // greedy method to search for more collinear points
                     }
                     Point[] collinearPoints = new Point[j+1];
@@ -47,39 +42,18 @@ public class FastCollinearPoints {
                     for (int p  = 0; p < j; p++) collinearPoints[p+1] = points[k+p]; //point j collinear points into an array
                     Arrays.sort(collinearPoints);
                     
-                    // check duplicates
-                    
-                    if (collinearStart.isEmpty()) { // if first group push in and do no check
-                        collinearStart.push(collinearPoints[0]);
-                        collinearEnd.push(collinearPoints[j]);
-                    }
-                    else {
-                        while (!collinearStart.isEmpty()) {
-                            Point a = collinearStart.pop(); // check every point and push into another temporary stack
-                            Point b = collinearEnd.pop();
-                            if (collinearPoints[0].compareTo(a) == 0 // if duplicate, push into temp stack and break
-                                    && collinearPoints[j].compareTo(b) == 0) {
-                                collinearStartCp.push(a);
-                                collinearEndCp.push(b);
-                                label = 1;
-                                break;
-                            }
-                            collinearStartCp.push(a);
-                            collinearEndCp.push(b);
-                            collinearStartCp.push(collinearPoints[0]); // otherwise just retrieve the poped values
-                            collinearEndCp.push(collinearPoints[j]);
-                        }
-                    }
-                    while (!collinearStartCp.isEmpty()) {
-                        collinearStart.push(collinearStartCp.pop());
-                        collinearEnd.push(collinearEndCp.pop());
-                    }
-                    if (label == 0) {
+                    // brilliant! push only if the ref points is the min of segment.
+                    if (pointsCopy[i].compareTo(collinearPoints[0]) == 0 && count == 0) {
                         ls.push(new LineSegment(collinearPoints[0], collinearPoints[j])); // push in a new line segment
                         count++; 
                     }
-                    label = 0;
-                    break;
+                    // end point different for 5 or more collinear
+                    else if (pointsCopy[i].compareTo(collinearPoints[0]) == 0 && collinearPoints[j].compareTo(oldfinal) != 0){
+                        ls.push(new LineSegment(collinearPoints[0], collinearPoints[j])); // push in a new line segment
+                        count++; 
+                    }
+                    oldfinal = collinearPoints[j];
+//                    break;
                 }
             }
         }
@@ -129,5 +103,6 @@ public class FastCollinearPoints {
             segment.draw();
         }
         StdDraw.show();
+        StdOut.println(collinear.numberOfSegments());
     }
 }

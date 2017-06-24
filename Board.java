@@ -5,12 +5,10 @@ import java.util.Stack;
 import java.util.Arrays;
 
 public class Board{
-    private int step;
     private int[][] blocks;
     
     public Board(int[][] blocks)           // construct a board from an n-by-n array of blocks
     { 
-        step = 0;
         this.blocks = blocks;
     } // (where blocks[i][j] = block in row i, column j)
     public int dimension()                 // board dimension n
@@ -24,7 +22,7 @@ public class Board{
             }
         }
         
-        return count+step;
+        return count;
     }
     public int manhattan()                 // sum of Manhattan distances between blocks and goal
     {
@@ -34,13 +32,14 @@ public class Board{
                 if (blocks[i][j] != i*dimension()+j+1 && blocks[i][j] != 0) count += Math.abs(i - (blocks[i][j]-1)/dimension()) + Math.abs(j - (blocks[i][j]-1)%dimension()); // Manhatten distance
             }
         }
-        return count+step;
+        return count;
     }
     public boolean isGoal()                // is this board the goal board?
     {
         for (int i = 0; i < dimension(); i++) {
-            for (int j = 0; j < dimension(); j++) {
-                if (blocks[i][j] != i*dimension()+j+1) return false;
+            for (int j = 0; j < dimension(); j++) { // notice corner case
+                if (i == dimension()-1 && j == dimension()-1) return blocks[i][j] == 0;
+                else if (blocks[i][j] != i*dimension()+j+1) return false;
             }
         }
         return true;
@@ -83,12 +82,6 @@ public class Board{
         if (this.getClass() != y.getClass()) return false;
         Board that = (Board) y; 
         return Arrays.equals(this.blocks, that.blocks);
-        /*        for (int i = 0; i < dimension(); i++) {
-         for (int j = 0; j < dimension(); j++) {
-         if (blocks[i][j] != i*dimension()+j+1) return false;
-         }
-         }
-         return true; */
     }
     public Iterable<Board> neighbors()     // all neighboring boards
     {
@@ -113,14 +106,13 @@ public class Board{
                 for (int j = 0; j < dimension(); j++)  blocksCopy[i][j] = blocks[i][j];
             }
             
-            int iNext = idx.pop();
             int jNext = idx.pop();
+            int iNext = idx.pop(); // notice order reversed
             
             // new Board generation
             swap(blocksCopy, iZero, jZero, iNext, jNext);
             nextBoard.push(new Board(blocksCopy)); // pushs in a reference type. Need a defensive copy
         }
-        step++;
         return nextBoard;
     }
     private Stack<Integer> neighborIndex(int iZero, int jZero) // find possible next moves
@@ -167,15 +159,18 @@ public class Board{
             for (int j = 0; j < n; j++)
             blocks[i][j] = in.readInt();
         Board initial = new Board(blocks);
-        StdOut.println(initial);
-        StdOut.println(initial.dimension());
-        StdOut.println("Hamming " + initial.hamming());
-        StdOut.println("Manhattan " + initial.manhattan());
-        StdOut.println(initial.isGoal());
-        StdOut.println(initial.twin());
+        Board initial2 = new Board(blocks);
         
-        StdOut.println(initial.equals(initial));
-        for (Board b: initial.neighbors()) StdOut.println(b);
+        StdOut.println(initial.equals(initial2));
+        /*        StdOut.println(initial);
+         StdOut.println(initial.dimension());
+         StdOut.println("Hamming " + initial.hamming());
+         StdOut.println("Manhattan " + initial.manhattan());
+         StdOut.println(initial.isGoal());
+         StdOut.println(initial.twin());
+         
+         StdOut.println(initial.equals(initial)); */
+//        for (Board b: initial.neighbors()) StdOut.println(b);
         
     }
 }

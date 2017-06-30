@@ -97,9 +97,10 @@ public class Solver {
     { 
         Stack<Board> tempsteps = new Stack<Board>();
         Stack<Board> finalsteps = new Stack<Board>();
-        while (latestMain.prev != null) { // trace back using latest.prev
-            tempsteps.push(latestMain.board);
-            latestMain = latestMain.prev;
+        Node latestMainCopy = latestMain;
+        while (latestMainCopy != null) { // trace back using latest.prev
+            tempsteps.push(latestMainCopy.board);
+            latestMainCopy = latestMainCopy.prev;
         }
         while (!tempsteps.isEmpty()) finalsteps.push(tempsteps.pop());
         return finalsteps; 

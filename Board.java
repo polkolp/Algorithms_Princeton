@@ -87,7 +87,7 @@ public final class Board {
         if (this == y) return true;
         if (this.getClass() != y.getClass()) return false;
         Board that = (Board) y; 
-        return Arrays.equals(this.newblocks, that.newblocks);
+        return Arrays.deepEquals(this.newblocks, that.newblocks);
     }
     public Iterable<Board> neighbors()     // all neighboring boards
     {

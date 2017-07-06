@@ -29,7 +29,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value>
         else if (cmp > 0) x.right = put(x.right, key, value);
         else x.value = value; // otherwise update value
         // update size. Two cases: a new Node or updating an old node.
-        root.size = size(x.left) + size(x.right) +1; // try root.left.size later
+        x.size = size(x.left) + size(x.right) +1; // try root.left.size later
         return x; // dont forget to return
     }
     

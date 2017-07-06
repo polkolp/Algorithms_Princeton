@@ -71,8 +71,10 @@ public class PointSET { // insert and contains logN, nearest and range N.Impleme
         for (Point2D p: ps.range(rc)) {
             StdDraw.circle(p.x(), p.y(), 0.01);
         }
-
-    
-    
+        Point2D pn = ps.nearest(new Point2D(0.3, 0.3));
+        StdDraw.circle(pn.x(), pn.y(), 0.02);
+        
+        
+        
     }
 }
